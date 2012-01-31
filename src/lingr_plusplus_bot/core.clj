@@ -15,7 +15,7 @@
           (swap! cnt inc)
           (if target
             (str target "++ (" @cnt ")")
-            "")))))
+            ""))))
 
 (defn -main []
   (run-jetty hello {:port 4003}))
