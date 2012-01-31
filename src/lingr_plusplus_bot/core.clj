@@ -10,7 +10,7 @@
   (POST "/"
         {body :body}
         (let [message (:message (first (:events (read-json (slurp body)))))]
-          (str (:text message) "++"))))
+          (str (re-find #"\w+\+\+$" (:text message))))))
 
 (defn -main []
   (run-jetty hello {:port 4003}))
