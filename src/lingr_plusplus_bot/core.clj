@@ -4,13 +4,15 @@
     [compojure.core]
     [ring.adapter.jetty]))
 
+(def cnt (atom 0))
 (defroutes
   hello
   (GET "/" [] "plus plus")
   (POST "/"
         {body :body}
         (let [message (:message (first (:events (read-json (slurp body)))))]
-          (str (re-find #"\w+\+\+$" (:text message))))))
+          (swap! cnt inc)
+          (str (second (re-find #"(\w+)\+\+$" (:text message))) "++ (" @cnt ")"))))
 
 (defn -main []
   (run-jetty hello {:port 4003}))
