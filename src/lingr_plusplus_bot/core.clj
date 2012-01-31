@@ -12,7 +12,10 @@
         {body :body}
         (let [message (:message (first (:events (read-json (slurp body)))))]
           (swap! cnt inc)
-          (str (second (re-find #"(\w+)\+\+$" (:text message))) "++ (" @cnt ")"))))
+          (let [target (second (re-find #"(\w+)\+\+$" (:text message)))]
+            (if target
+              (str target "++ (" @cnt ")")
+              "")))))
 
 (defn -main []
   (run-jetty hello {:port 4003}))
