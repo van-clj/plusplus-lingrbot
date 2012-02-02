@@ -11,7 +11,7 @@
   (POST "/"
         {body :body}
         (let [message (:message (first (:events (read-json (slurp body)))))
-              target (second (re-find #"(\w+)\+\+$" (:text message)))]
+              target (second (re-find #"([a-zA-Z0-9_-])\+\+$" (:text message)))]
           (if target
             (let [cnt (+ 1 (or (get @plusplus target) 0))]
               (swap! plusplus assoc target cnt)
