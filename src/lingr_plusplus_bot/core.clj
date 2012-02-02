@@ -4,7 +4,7 @@
     [compojure.core]
     [ring.adapter.jetty]))
 
-(def cnt (atom 0))
+(def plusplus (atom {}))
 (defroutes
   hello
   (GET "/" [] "plus plus")
@@ -12,9 +12,10 @@
         {body :body}
         (let [message (:message (first (:events (read-json (slurp body)))))
               target (second (re-find #"(\w+)\+\+$" (:text message)))]
-          (swap! cnt inc)
           (if target
-            (str target "++ (" @cnt ")")
+            (let [cnt (+ 1 (or (get @plusplus target) 0))]
+              (swap! plusplus assoc target cnt)
+              (str target "++ (" cnt ")"))
             ""))))
 
 (defn -main []
