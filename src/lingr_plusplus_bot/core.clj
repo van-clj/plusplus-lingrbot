@@ -12,18 +12,19 @@
   (GET "/" [] "plus plus")
   (POST "/"
         {body :body}
-        (let [message (:message (first (:events (read-json (slurp body)))))
-              plus (second (re-find #"([a-zA-Z0-9_-]+)\+\+$" (:text message)))
-              minus (second (re-find #"([a-zA-Z0-9_-]+)--$" (:text message)))]
-          (if plus
-            (let [cnt (+ (or (get @plusplus plus) 0) 1)]
-              (swap! plusplus assoc plus cnt)
-              (str plus "++ (" cnt ")"))
-            (if minus
-              (let [cnt (+ (or (get @plusplus minus) 0) -1)]
-                (swap! plusplus assoc minus cnt)
-                (str minus "-- (" cnt ")"))
-              "")))))
+        (map (fn [event]
+          (let [message (:message event)
+                plus (second (re-find #"([a-zA-Z0-9_-]+)\+\+$" (:text message)))
+                minus (second (re-find #"([a-zA-Z0-9_-]+)--$" (:text message)))]
+            (if plus
+              (let [cnt (+ (or (get @plusplus plus) 0) 1)]
+                (swap! plusplus assoc plus cnt)
+                (str plus "++ (" cnt ")\n"))
+              (if minus
+                (let [cnt (+ (or (get @plusplus minus) 0) -1)]
+                  (swap! plusplus assoc minus cnt)
+                  (str minus "-- (" cnt ")\n"))
+                "")))) (:events (read-json (slurp body))))))
 
 (defn -main []
   (with-open [r (reader "plusplus.json")]
