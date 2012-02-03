@@ -6,9 +6,6 @@
     [clojure.contrib.duck-streams :only (reader read-lines writer)]
     [ring.adapter.jetty]))
 
-(defn plus-set [m f]
-  )
-(def ^:dynamic x 1)
 (def plusplus (atom (hash-map)))
 (defroutes
   hello
@@ -34,7 +31,5 @@
       (swap! plusplus assoc k v)), {}, (read-json r false)))
   (defonce server (run-jetty hello {:port 4003 :join? false}))
   (.addShutdownHook (Runtime/getRuntime) (Thread. (fn []
-    (spit "plusplus.json" (json-str @plusplus)) (.stop server)
-  )))
-  (.start server)
-)
+    (spit "plusplus.json" (json-str @plusplus)) (.stop server))))
+  (.start server))
