@@ -12,8 +12,8 @@
   (let [message (:message event)
         plus (second (re-find #"([a-zA-Z0-9_-]+)\+\+$" (:text message)))
         minus (second (re-find #"([a-zA-Z0-9_-]+)--$" (:text message)))
-        pluseq (re-find #"([a-zA-Z0-9_-]+)\+=([0-9]+)$" (:text message))
-        minuseq (re-find #"([a-zA-Z0-9_-]+)\-=([0-9]+)$" (:text message))]
+        pluseq (re-find #"([a-zA-Z0-9_-]+)\+=([0-9])$" (:text message))
+        minuseq (re-find #"([a-zA-Z0-9_-]+)\-=([0-9])$" (:text message))]
     (cond
       plus (let [cnt (+ (or (get @plusplus plus) 0) 1)]
              (swap! plusplus assoc plus cnt)
