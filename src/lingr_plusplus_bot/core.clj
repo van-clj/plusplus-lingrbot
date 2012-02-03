@@ -21,21 +21,16 @@
             plus (let [cnt (+ (or (get @plusplus plus) 0) 1)]
                    (swap! plusplus assoc plus cnt)
                    (str plus "++ (" cnt ")"))
-            minus (do
-                    (let [cnt (+ (or (get @plusplus minus) 0) -1)]
+            minus (let [cnt (+ (or (get @plusplus minus) 0) -1)]
                       (swap! plusplus assoc minus cnt)
                       (str minus "-- (" cnt ")"))
-                    "")
-            pluseq (do
-                     (let [cnt (+ (get @plusplus pluseq) 0)] 
+            pluseq (let [cnt (+ (get @plusplus pluseq) 0)]
                        (swap! plusplus assoc pluseq cnt)
                        (str pluseq "+=" pluseq "(" cnt ")"))
-                     "")
-            minuseq (do
-                     (let [cnt (- (get @plusplus minuseq) 0)]
+            minuseq (let [cnt (- (get @plusplus minuseq) 0)]
                        (swap! plusplus assoc minuseq cnt)
                        (str minuseq "-=" minuseq "(" cnt ")"))
-                     "")))))
+            :else ""))))
 
 (defn -main []
   (with-open [r (reader "plusplus.json")]
