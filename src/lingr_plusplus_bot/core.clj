@@ -30,12 +30,12 @@
                      (let [cnt (+ (get @plusplus pluseq) 0)] 
                        (swap! plusplus assoc pluseq cnt)
                        (str pluseq "+=" pluseq "(" cnt ")"))
-                     ""))
-            (if pluseq
-              (let [cnt (+ (get @plusplus pluseq) 0)]
-                (swap! plusplus assoc pluseq cnt)
-                (str pluseq "+=" pluseq "(" cnt ")"))
-              "")))))
+                     "")
+            minuseq (do
+                     (let [cnt (- (get @plusplus minuseq) 0)]
+                       (swap! plusplus assoc minuseq cnt)
+                       (str minuseq "-=" minuseq "(" cnt ")"))
+                     "")))))
 
 (defn -main []
   (with-open [r (reader "plusplus.json")]
