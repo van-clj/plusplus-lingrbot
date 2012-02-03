@@ -27,7 +27,7 @@
       minuseq (let [cnt (- (get @plusplus minuseq) 0)]
                 (swap! plusplus assoc minuseq cnt)
                 (str minuseq "-=" minuseq "(" cnt ")"))
-      :else ""))))
+      :else "")))
 
 (defroutes
   hello
