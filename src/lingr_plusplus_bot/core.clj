@@ -12,8 +12,8 @@
   (let [message (:message event)
         plus (second (re-find #"([a-zA-Z0-9_-]+)\+\+$" (:text message)))
         minus (second (re-find #"([a-zA-Z0-9_-]+)--$" (:text message)))
-        pluseq (nth (re-find #"([a-zA-Z0-9_-]+)\+=([0-9])$" (:text message)) 3)
-        minuseq (nth (re-find #"([a-zA-Z0-9_-]+)-=([0-9])$" (:text message)) 3)]
+        pluseq (re-find #"([a-zA-Z0-9_-]+)\+=([0-9]+)$" (:text message))
+        minuseq (re-find #"([a-zA-Z0-9_-]+)\-=([0-9]+)$" (:text message))]
     (cond
       plus (let [cnt (+ (or (get @plusplus plus) 0) 1)]
              (swap! plusplus assoc plus cnt)
@@ -21,12 +21,14 @@
       minus (let [cnt (+ (or (get @plusplus minus) 0) -1)]
               (swap! plusplus assoc minus cnt)
               (str minus "-- (" cnt ")"))
-      pluseq (let [cnt (+ (get @plusplus pluseq) 0)]
-               (swap! plusplus assoc pluseq cnt)
-               (str pluseq "+=" pluseq "(" cnt ")"))
-      minuseq (let [cnt (- (get @plusplus minuseq) 0)]
-                (swap! plusplus assoc minuseq cnt)
-                (str minuseq "-=" minuseq "(" cnt ")"))
+      pluseq (let [cnt (+ (or (get @plusplus (nth pluseq 1)) 0)
+                          (Integer/parseInt (nth pluseq 2)))]
+                 (swap! plusplus assoc (nth pluseq 1) cnt)
+                 (str (nth pluseq 1) "+=" (nth pluseq 2) "(" cnt ") "))
+      minuseq (let [cnt (- (or (get @plusplus (nth minuseq 1)) 0)
+                           (Integer/parseInt (nth minuseq 2)))]
+                 (swap! plusplus assoc (nth minuseq 1) cnt)
+                 (str (nth minuseq 1) "-=" (nth minuseq 2) "(" cnt ") "))
       :else "")))
 
 (defroutes
