@@ -15,8 +15,8 @@
         (let [message (:message (first (:events (read-json (slurp body)))))
               plus (second (re-find #"([a-zA-Z0-9_-]+)\+\+$" (:text message)))
               minus (second (re-find #"([a-zA-Z0-9_-]+)--$" (:text message)))
-              pluseq (nth (re-find #"([a-zA-Z0-9_-]+)\+=(0-9)$" (:text message)) 3)
-              minuseq (nth (re-find #"([a-zA-Z0-9_-]+)-=(0-9)$" (:text message)) 3)]
+              pluseq (nth (re-find #"([a-zA-Z0-9_-]+)\+=([0-9])$" (:text message)) 3)
+              minuseq (nth (re-find #"([a-zA-Z0-9_-]+)-=([0-9])$" (:text message)) 3)]
           (cond
             plus (let [cnt (+ (or (get @plusplus plus) 0) 1)]
                    (swap! plusplus assoc plus cnt)
