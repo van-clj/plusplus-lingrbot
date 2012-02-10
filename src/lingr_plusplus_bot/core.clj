@@ -4,6 +4,7 @@
     [clojure.data.json :only (read-json json-str)]
     [compojure.core]
     [clojure.contrib.duck-streams :only (reader read-lines writer)]
+    [clojure.contrib.string :only (lower-case)]
     [ring.adapter.jetty]))
 
 (def plusplus (atom (hash-map)))
@@ -15,20 +16,26 @@
         pluseq (re-find #"([a-zA-Z0-9_-]+)\+=([0-9])$" (:text message))
         minuseq (re-find #"([a-zA-Z0-9_-]+)\-=([0-9])$" (:text message))]
     (cond
-      plus (let [cnt (+ (or (get @plusplus plus) 0) 1)]
-             (swap! plusplus assoc plus cnt)
-             (str plus "++ (" cnt ")"))
-      minus (let [cnt (+ (or (get @plusplus minus) 0) -1)]
-              (swap! plusplus assoc minus cnt)
-              (str minus "-- (" cnt ")"))
-      pluseq (let [cnt (+ (or (get @plusplus (nth pluseq 1)) 0)
-                          (Integer/parseInt (nth pluseq 2)))]
-                 (swap! plusplus assoc (nth pluseq 1) cnt)
-                 (str (nth pluseq 1) "+=" (nth pluseq 2) " (" cnt ")"))
-      minuseq (let [cnt (- (or (get @plusplus (nth minuseq 1)) 0)
-                           (Integer/parseInt (nth minuseq 2)))]
-                 (swap! plusplus assoc (nth minuseq 1) cnt)
-                 (str (nth minuseq 1) "-=" (nth minuseq 2) " (" cnt ")"))
+      plus (let [user (lower-case plus)
+                 cnt (+ (or (get @plusplus user) 0) 1)]
+             (swap! plusplus assoc user cnt)
+             (str user "++ (" cnt ")"))
+      minus (let [user (lower-case minus)
+                  cnt (+ (or (get @plusplus user) 0) -1)]
+              (swap! plusplus assoc user cnt)
+              (str user "-- (" cnt ")"))
+      pluseq (let [user (lower-case (nth pluseq 1))
+                   value (nth pluseq 2)
+                   cnt (+ (or (get @plusplus user) 0)
+                          (Integer/parseInt value))]
+                 (swap! plusplus assoc user cnt)
+                 (str user "+=" value " (" cnt ")"))
+      minuseq (let [user (lower-case (nth minuseq 1))
+                    value (nth minuseq 2)
+                    cnt (- (or (get @plusplus user) 0)
+                           (Integer/parseInt value))]
+                 (swap! plusplus assoc user cnt)
+                 (str user "-=" value " (" cnt ")"))
       :else "")))
 
 (defroutes
@@ -41,7 +48,7 @@
 (defn -main []
   (with-open [r (reader "plusplus.json")]
     (reduce (fn [m [k v]]
-      (swap! plusplus assoc k v)), {}, (read-json r false)))
+      (swap! plusplus assoc (lower-case k) v)), {}, (read-json r false)))
   (defonce server (run-jetty hello {:port 4003 :join? false}))
   (.addShutdownHook (Runtime/getRuntime) (Thread. (fn []
     (spit "plusplus.json" (json-str @plusplus)) (.stop server))))
