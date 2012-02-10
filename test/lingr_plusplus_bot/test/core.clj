@@ -33,3 +33,10 @@
   (is (= (trim (event2response {:message {:text "ujihisa-=20000"}})) ""))
   (is (= (trim (event2response {:message {:text "ujihisa-=2"}})) "ujihisa-=2 (19998)"))
 )
+
+(deftest test-case-sensitive
+  (swap! plusplus assoc "shougo" 0)
+  (is (= (trim (event2response {:message {:text "Shougo++"}})) "shougo++ (1)"))
+  (is (= (trim (event2response {:message {:text "shougo++"}})) "shougo++ (2)"))
+  (is (= (trim (event2response {:message {:text "sHoUgO++"}})) "shougo++ (3)"))
+)
