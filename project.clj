@@ -1,4 +1,4 @@
-(defproject lingr-plusplus-bot "1.0.0-SNAPSHOT"
+(defproject lingr-plusplus-bot "1.0.0"
   :description "increment your friend"
   :main lingr-plusplus-bot.core
   :dependencies [[org.clojure/clojure "1.5.0"]
