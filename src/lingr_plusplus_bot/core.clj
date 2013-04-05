@@ -46,7 +46,7 @@
 (defn -main []
   (doseq [[k v] (read-json (slurp "plusplus.json"))]
     (swap! plusplus assoc (lower-case k) v))
-  (defonce server (run-jetty hello {:port 4003 :join? false}))
+  (defonce server (run-jetty hello {:port (Integer/parseInt (or (System/getenv "PORT") "4001")) :join? false}))
   (.addShutdownHook (Runtime/getRuntime) (Thread. (fn []
     (spit "plusplus.json" (json-str @plusplus)) (.stop server))))
   (.start server))
