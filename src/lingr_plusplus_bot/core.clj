@@ -13,7 +13,8 @@
         plus (second (re-find #"([^+ ]+)\+\+$" (:text message)))
         minus (second (re-find #"([^+ ]+)--$" (:text message)))
         pluseq (re-find #"([^+ ]+)\+=([0-9]+)$" (:text message))
-        minuseq (re-find #"([^+ ]+)\-=([0-9]+)$" (:text message))]
+        minuseq (re-find #"([^+ ]+)\-=([0-9]+)$" (:text message))
+        graph (re-find #"^\+\+\?$" (:text message))]
    (cond
       plus (let [user (lower-case plus)
                  cnt (+ (or (get @plusplus user) 0) 1)]
@@ -35,6 +36,13 @@
                            (Integer/parseInt value))]
                  (swap! plusplus assoc user cnt)
                  (str user "-=" value " (" cnt ")"))
+      graph (let [k (keys @plusplus)]
+          (str
+            "https://chart.googleapis.com/chart?cht=p3&chd=t:"
+            (clojure.string/join "," (for [kk k] (@plusplus kk)))
+            "&chs=250x100&chl="
+            (clojure.string/join "%7c" k)
+            "#.jpg"))
       :else "")))
 
 (defroutes
