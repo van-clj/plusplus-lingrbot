@@ -3,11 +3,10 @@
   (:use
     [clojure.data.json :only (read-json json-str)]
     [compojure.core]
-    [clojure.contrib.duck-streams :only (reader read-lines writer)]
-    [clojure.contrib.string :only (lower-case)]
+    [clojure.string :only (lower-case)]
     [ring.adapter.jetty]))
 
-(def plusplus (atom (hash-map)))
+(def plusplus (atom {}))
 (defn event2response [event]
   (let [message (:message event)
         plus (second (re-find #"([^+ ]+)\+\+$" (:text message)))
@@ -53,10 +52,9 @@
         (apply str (interpose "\n" (map event2response (:events (read-json (slurp body))))))))
 
 (defn -main []
-  (with-open [r (reader "plusplus.json")]
-    (reduce (fn [m [k v]]
-      (swap! plusplus assoc (lower-case k) v)), {}, (read-json r false)))
-  (defonce server (run-jetty hello {:port 4003 :join? false}))
+  (doseq [[k v] (read-json (slurp "plusplus.json"))]
+    (swap! plusplus assoc (lower-case k) v))
+  (defonce server (run-jetty hello {:port (Integer/parseInt (or (System/getenv "PORT") "4001")) :join? false}))
   (.addShutdownHook (Runtime/getRuntime) (Thread. (fn []
     (spit "plusplus.json" (json-str @plusplus)) (.stop server))))
   (.start server))

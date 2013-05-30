@@ -1,8 +1,7 @@
-(defproject lingr-plusplus-bot "1.0.0-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject plusplus-lingrbot "1.1.0-SNAPSHOT"
+  :description "increment your friend"
   :main lingr-plusplus-bot.core
-  :dependencies [[org.clojure/clojure "1.3.0"]
-                 [org.clojure/data.json "0.1.2"]
-                 [org.clojure/clojure-contrib "1.2.0"]
-                 [compojure "1.0.0-RC2"]
-                 [ring "1.0.1"]])
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/data.json "0.2.1"]
+                 [compojure "1.1.5"]
+                 [ring "1.1.8"]])
